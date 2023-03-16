@@ -1,0 +1,38 @@
+﻿[
+  {
+    "color": [0.2, 0.2, 0.2, 1],
+    "position": [0.0, 0.0, 0.0],
+    "rotation": 0.0,
+    "mesh": "HOUSE_2"
+  },
+  {
+    "color": [0.2, 0.8, 0.2, 1],
+    "position": [7.5, -0.75, 2.5],
+    "rotation": 0.0,
+    "mesh": "BIG_TREE"
+  },
+  {
+    "color": [0.2, 0.8, 0.2, 1],
+    "position": [-7.5, -0.75, 2.5],
+    "rotation": 0.0,
+    "mesh": "BIG_TREE"
+  },
+  {
+    "color": [0.2, 0.2, 1.0, 1],
+    "position": [4.5, -2.15, 6.5],
+    "rotation": -115.0,
+    "mesh": "POLICE_CAR"
+  },
+  {
+    "color": [0.23, 0.23, 1.0, 1],
+    "position": [4.25, -2.15, 10.5],
+    "rotation": -105.0,
+    "mesh": "POLICE_CAR"
+  },
+  {
+    "color": [0.95, 0.13, 0.13, 1],
+    "position": [-1.25, -2.15, 9.0],
+    "rotation": 170.0,
+    "mesh": "JEEP"
+  }
+]
