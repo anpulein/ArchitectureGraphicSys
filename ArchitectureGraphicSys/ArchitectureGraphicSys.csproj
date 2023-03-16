@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <LangVersion>8</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AssimpNet" Version="4.1.0" />
+      <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.3.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="OpenTK" Version="4.7.5" />
+      <PackageReference Include="StbImageLib" Version="2.22.3" />
+      <PackageReference Include="StbImageSharp" Version="2.27.13" />
+      <PackageReference Include="System.Drawing.Common" Version="8.0.0-preview.1.23110.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\lib.Data\lib.Data.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -11,7 +11,7 @@ using ArchitectureGraphicSys;
 using lib.Data;
 
 
-namespace Lab3
+namespace Lab4
 {
     public class GraphicObjects : GraphicObjectsMain
     {
@@ -37,7 +37,6 @@ namespace Lab3
             +0.5f, -0.5f, +0.5f, -0.5f, -0.5f, -0.5f, +0.5f, -0.5f, -0.5f
         };
         
-
         public GraphicObjects(int weight, int height, string title) : base(weight, height, title) { Init(); }
 
         public GraphicObjects(string title) : base(title) { Init(); }
@@ -50,6 +49,8 @@ namespace Lab3
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             GetFPS((float)e.Time);
+            
+            _time += 0.05f * e.Time;
             
             base.OnUpdateFrame(e);
             
@@ -113,20 +114,14 @@ namespace Lab3
             _vertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
+            
             _vertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(_vertexArrayObject);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-
-            foreach (var gr in _graphics)
-            {
-                gr.Shader = new Shader(Data.LOCAL_PATH_SHADER_VERTICAL, Data.LOCAL_PATH_SHADER_FRAGMENT);
-                gr.Shader.Use();
-                
-                gr.Shader.SetVector3("position", gr.Position);
-                gr.Shader.SetVector3("aColor", GetColors(gr.Color));
-            }
+            
+            _shader = new Shader(Data.LOCAL_PATH_SHADER_VERTICAL, Data.LOCAL_PATH_SHADER_FRAGMENT);
+            _shader.Use();
             
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
@@ -142,30 +137,21 @@ namespace Lab3
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            
-            // _time += 4.0 * e.Time;
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            var transform = Matrix4.Identity;
-
+            GL.BindVertexArray(_vertexArrayObject);
+            
+            var viewMatrix = _camera.GetViewMatrix();
+            _shader.Use();
+            _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
             //Code goes here.
 
             foreach (var gr in _graphics)
             {
-                transform = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(gr.Rotation));
-                transform *= Matrix4.CreateTranslation(0.0f, 0.0f, 0.0f);
+                _shader.SetMatrix4("modelViewMatrix", gr.ModelMatrix * viewMatrix);
+                _shader.SetVector4("aColor", gr.getColor());
 
-                gr.Shader.Use();
-                var model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time));
-                gr.Shader.SetMatrix4("model", model);
-                gr.Shader.SetMatrix4("view", _camera.GetViewMatrix());
-                gr.Shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
-                gr.Shader.SetMatrix4("transform", transform);
-                
-                GL.BindVertexArray(_vertexArrayObject);
-
-
-                GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
+                gr.Mesh?.Render();
             }
             
             SwapBuffers();
@@ -196,44 +182,17 @@ namespace Lab3
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteBuffer(_vertexBufferObject);
 
-            foreach (var gr in _graphics)
-            {
-                GL.DeleteProgram(gr.Shader.Handle);
-            }
             
-            base.OnUnload();
+            GL.DeleteProgram(_shader.Handle);
+
+                base.OnUnload();
         }
 
         private void Init()
         {
-            _graphics.Add(new Graphics(
-                new Vector3(0.0f, 0.0f, 1.0f),
-                Data.Colors.Blue
-                ));
-            _graphics.Add(new Graphics(
-                new Vector3(0.0f, 1.0f, 1.0f),
-                Data.Colors.Black
-            ));
-            _graphics.Add(new Graphics(
-                new Vector3(-1.0f, 0.0f, 0.9f),
-                Data.Colors.Blue,
-                -20f
-            ));
-            _graphics.Add(new Graphics(
-                new Vector3(-1.0f, 1.0f, 0.9f),
-                Data.Colors.Black,
-                -20f
-            ));
-            _graphics.Add(new Graphics(
-                new Vector3(-3.0f, 0.0f, 1.0f),
-                Data.Colors.Blue,
-                -20f
-            ));
-            _graphics.Add(new Graphics(
-                new Vector3(-3.0f, 1.0f, 1.0f),
-                Data.Colors.Green,
-                -20f
-            ));
+
+            LoadMesh(Data.MeshesList);
+            ParseJsonObjects(Data.LOCAL_PATH_JSON_OBJECTS);
         }
     }
 }

@@ -9,9 +9,10 @@ using GL = OpenTK.Graphics.OpenGL4.GL;
 
 using ArchitectureGraphicSys;
 using lib.Data;
+using TextureUnit = OpenTK.Graphics.OpenGL.TextureUnit;
 
 
-namespace Lab4
+namespace Lab5
 {
     public class GraphicObjects : GraphicObjectsMain
     {
@@ -106,10 +107,13 @@ namespace Lab4
             
             GL.ClearColor(1f, 1f, 1f, 1.0f);
             
-            // GL.Enable(EnableCap.DepthTest);
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            // GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+            // GL.Enable(EnableCap.Texture2D);
+            //Basically enables the alpha channel to be used in the color buffer
+            // GL.Enable(EnableCap.Blend);
+            // //The operation/order to blend
+            // GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            //Use for pixel depth comparing before storing in the depth buffer
+            GL.Enable(EnableCap.DepthTest);
 
             _vertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
@@ -123,6 +127,18 @@ namespace Lab4
             _shader = new Shader(Data.LOCAL_PATH_SHADER_VERTICAL, Data.LOCAL_PATH_SHADER_FRAGMENT);
             _shader.Use();
             
+            
+            // var vertexLocation = _shader.GetAttribLocation("vPosition");
+            // GL.EnableVertexAttribArray(vertexLocation);
+            // GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            //
+            // // Next, we also setup texture coordinates. It works in much the same way.
+            // // We add an offset of 3, since the texture coordinates comes after the position data.
+            // // We also change the amount of data to 2 because there's only 2 floats for texture coordinates.
+            // var texCoordLocation = _shader.GetAttribLocation("vTexCoord");
+            // GL.EnableVertexAttribArray(texCoordLocation);
+            // GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
             _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
             CursorState = CursorState.Grabbed;
@@ -138,9 +154,9 @@ namespace Lab4
         {
             base.OnRenderFrame(e);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.BindVertexArray(_vertexArrayObject);
-            
+
             var viewMatrix = _camera.GetViewMatrix();
             _shader.Use();
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
@@ -149,8 +165,6 @@ namespace Lab4
             foreach (var gr in _graphics)
             {
                 _shader.SetMatrix4("modelViewMatrix", gr.ModelMatrix * viewMatrix);
-                _shader.SetVector4("aColor", gr.getColor());
-
                 gr.Mesh?.Render();
             }
             

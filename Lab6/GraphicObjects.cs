@@ -12,7 +12,7 @@ using lib.Data;
 using TextureUnit = OpenTK.Graphics.OpenGL.TextureUnit;
 
 
-namespace Lab5
+namespace Lab6
 {
     public class GraphicObjects : GraphicObjectsMain
     {
@@ -126,8 +126,10 @@ namespace Lab5
             
             _shader = new Shader(Data.LOCAL_PATH_SHADER_VERTICAL, Data.LOCAL_PATH_SHADER_FRAGMENT);
             _shader.Use();
-            
-            
+
+            _light = new Shader(Data.LOCAL_PATH_SHADER_VERTICAL, Data.LOCAL_PATH_LIGHT_FRAGMENT);
+            _light.Use();
+
             // var vertexLocation = _shader.GetAttribLocation("vPosition");
             // GL.EnableVertexAttribArray(vertexLocation);
             // GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);

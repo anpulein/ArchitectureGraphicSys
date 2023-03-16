@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0-windows</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ArchitectureGraphicSys\ArchitectureGraphicSys.csproj" />
+      <ProjectReference Include="..\lib.Data\lib.Data.csproj" />
+    </ItemGroup>
+
+</Project>
